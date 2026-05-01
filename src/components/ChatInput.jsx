@@ -1,15 +1,19 @@
-import { useEffect, useRef, useState, KeyboardEvent } from "react";
-import { ArrowUp, Paperclip, Sparkles, Globe, Image as ImageIcon, Lightbulb } from "lucide-react";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import {
+  ArrowUp,
+  Paperclip,
+  Sparkles,
+  Globe,
+  Image as ImageIcon,
+  Lightbulb,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Props = {
-  onSend: (text: string) => void;
-  disabled?: boolean;
-};
-
-export const ChatInput = ({ onSend, disabled }: Props) => {
+export const ChatInput = ({ onSend, disabled }) => {
   const [value, setValue] = useState("");
-  const ref = useRef<HTMLTextAreaElement>(null);
+  const ref = useRef(null);
 
   useEffect(() => {
     const el = ref.current;
@@ -25,7 +29,7 @@ export const ChatInput = ({ onSend, disabled }: Props) => {
     setValue("");
   };
 
-  const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const onKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       submit();
@@ -86,9 +90,7 @@ export const ChatInput = ({ onSend, disabled }: Props) => {
   );
 };
 
-const Pill = ({
-  icon: Icon, label, highlight,
-}: { icon: any; label: string; highlight?: boolean }) => (
+const Pill = ({ icon: Icon, label, highlight }) => (
   <button
     type="button"
     className={cn(
@@ -103,7 +105,7 @@ const Pill = ({
   </button>
 );
 
-const IconBtn = ({ icon: Icon, title }: { icon: any; title: string }) => (
+const IconBtn = ({ icon: Icon, title }) => (
   <button
     type="button"
     title={title}

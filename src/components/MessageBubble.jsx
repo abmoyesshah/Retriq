@@ -1,12 +1,11 @@
+"use client";
+
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { Sparkles, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { ChatMessage } from "@/contexts/ChatContext";
 
-export type { ChatMessage };
-
-export const MessageBubble = ({ message }: { message: ChatMessage }) => {
+export const MessageBubble = ({ message }) => {
   const isUser = message.role === "user";
   return (
     <motion.div

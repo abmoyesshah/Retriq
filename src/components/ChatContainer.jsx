@@ -1,30 +1,34 @@
-import { useEffect, useRef } from "react";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useChats, ChatMessage } from "@/contexts/ChatContext";
+import { useChats } from "@/contexts/ChatContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { ChatInput } from "./ChatInput";
 import { MessageBubble, TypingBubble } from "./MessageBubble";
 import { sendChat } from "@/lib/api";
 import { toast } from "sonner";
-import { useState } from "react";
 import { Lightbulb, FileSearch, ListChecks, Sparkles as SparklesIcon } from "lucide-react";
 
 export const ChatContainer = () => {
   const { user } = useAuth();
   const { active, appendMessage, newChat } = useChats();
   const [loading, setLoading] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef(null);
 
-  const messages: ChatMessage[] = active?.messages ?? [];
+  const messages = active?.messages ?? [];
   const isEmpty = messages.length === 0;
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+    scrollRef.current?.scrollTo({
+      top: scrollRef.current.scrollHeight,
+      behavior: "smooth",
+    });
   }, [messages.length, loading]);
 
-  const handleSend = async (text: string) => {
+  const handleSend = async (text) => {
     if (!active) newChat();
-    const userMsg: ChatMessage = { id: crypto.randomUUID(), role: "user", content: text };
+    const userMsg = { id: crypto.randomUUID(), role: "user", content: text };
     appendMessage(userMsg);
     setLoading(true);
     try {
@@ -55,7 +59,9 @@ export const ChatContainer = () => {
           ) : (
             <div className="flex flex-col gap-5 pb-4">
               <AnimatePresence initial={false}>
-                {messages.map((m) => <MessageBubble key={m.id} message={m} />)}
+                {messages.map((m) => (
+                  <MessageBubble key={m.id} message={m} />
+                ))}
                 {loading && <TypingBubble key="typing" />}
               </AnimatePresence>
             </div>
@@ -68,13 +74,29 @@ export const ChatContainer = () => {
 };
 
 const SUGGESTIONS = [
-  { icon: FileSearch, title: "Synthesize Data", text: "Turn my meeting notes into 5 key bullet points for the team." },
-  { icon: Lightbulb, title: "Creative Brainstorm", text: "Generate 3 taglines for a new sustainable fashion brand." },
-  { icon: ListChecks, title: "Check Facts", text: "Compare key differences between GDPR and CCPA." },
-  { icon: SparklesIcon, title: "Summarize Docs", text: "Summarize the key points of my uploaded documents." },
+  {
+    icon: FileSearch,
+    title: "Synthesize Data",
+    text: "Turn my meeting notes into 5 key bullet points for the team.",
+  },
+  {
+    icon: Lightbulb,
+    title: "Creative Brainstorm",
+    text: "Generate 3 taglines for a new sustainable fashion brand.",
+  },
+  {
+    icon: ListChecks,
+    title: "Check Facts",
+    text: "Compare key differences between GDPR and CCPA.",
+  },
+  {
+    icon: SparklesIcon,
+    title: "Summarize Docs",
+    text: "Summarize the key points of my uploaded documents.",
+  },
 ];
 
-const Hero = ({ name, onPick }: { name: string; onPick: (t: string) => void }) => (
+const Hero = ({ name, onPick }) => (
   <motion.div
     initial={{ opacity: 0, y: 12 }}
     animate={{ opacity: 1, y: 0 }}
@@ -87,12 +109,10 @@ const Hero = ({ name, onPick }: { name: string; onPick: (t: string) => void }) =
       transition={{ duration: 0.7, ease: "easeOut" }}
       className="orb mb-6 h-24 w-24"
     />
-
     <h2 className="text-xl font-medium text-primary">Hello, {name}</h2>
     <h1 className="mt-1 text-3xl font-semibold tracking-tight md:text-4xl">
       How can I assist you today?
     </h1>
-
     <div className="mt-10 grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {SUGGESTIONS.map((s, i) => (
         <motion.button

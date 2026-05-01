@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Upload, FileText, CheckCircle2, Loader2, Trash2, X } from "lucide-react";
@@ -5,34 +7,32 @@ import { uploadDocument } from "@/lib/api";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-type UploadedFile = {
-  id: string;
-  name: string;
-  size: number;
-  uploadedAt: string;
-};
-
 const STORAGE_KEY = "ai-assistant:uploaded-files";
 
-const load = (): UploadedFile[] => {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { return []; }
+const load = () => {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  } catch {
+    return [];
+  }
 };
-const save = (files: UploadedFile[]) => localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+const save = (files) =>
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
 
-const formatSize = (bytes: number) => {
+const formatSize = (bytes) => {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
 };
 
 export const FileUploadCard = () => {
-  const [files, setFiles] = useState<UploadedFile[]>(load);
+  const [files, setFiles] = useState(load);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [dragOver, setDragOver] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef(null);
 
-  const handleFiles = async (fileList: FileList | null) => {
+  const handleFiles = async (fileList) => {
     if (!fileList || fileList.length === 0) return;
     const file = fileList[0];
 
@@ -46,7 +46,7 @@ export const FileUploadCard = () => {
       await uploadDocument(file);
       clearInterval(tick);
       setProgress(100);
-      const next: UploadedFile = {
+      const next = {
         id: crypto.randomUUID(),
         name: file.name,
         size: file.size,
@@ -56,7 +56,7 @@ export const FileUploadCard = () => {
       setFiles(updated);
       save(updated);
       toast.success(`${file.name} uploaded successfully`);
-    } catch (err) {
+    } catch {
       clearInterval(tick);
       toast.error("Upload failed. Please try again.");
     } finally {
@@ -68,7 +68,7 @@ export const FileUploadCard = () => {
     }
   };
 
-  const removeOne = (id: string) => {
+  const removeOne = (id) => {
     const updated = files.filter((f) => f.id !== id);
     setFiles(updated);
     save(updated);
@@ -84,7 +84,10 @@ export const FileUploadCard = () => {
   return (
     <div className="space-y-6">
       <div
-        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragOver(true);
+        }}
         onDragLeave={() => setDragOver(false)}
         onDrop={(e) => {
           e.preventDefault();
@@ -145,7 +148,8 @@ export const FileUploadCard = () => {
           <div>
             <h3 className="text-sm font-semibold">Uploaded documents</h3>
             <p className="text-xs text-muted-foreground">
-              {files.length} {files.length === 1 ? "file" : "files"} in your knowledge base
+              {files.length} {files.length === 1 ? "file" : "files"} in your
+              knowledge base
             </p>
           </div>
           {files.length > 0 && (
@@ -180,7 +184,8 @@ export const FileUploadCard = () => {
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{f.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {formatSize(f.size)} · {new Date(f.uploadedAt).toLocaleString()}
+                    {formatSize(f.size)} ·{" "}
+                    {new Date(f.uploadedAt).toLocaleString()}
                   </p>
                 </div>
                 <CheckCircle2 className="h-4 w-4 text-primary" />
