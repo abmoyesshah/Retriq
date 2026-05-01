@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Sparkles, Loader2, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import ThemeToggle from "@/components/ThemeToggle";
+import {ThemeToggle} from "@/components/ThemeToggle";
 
 export default function SignupPage() {
   const { user, signup, loginWithGoogle } = useAuth();
